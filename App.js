@@ -9,9 +9,11 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import Select from './app/components/Select';
 import Input from './app/components/Input';
 import RadioButton from './app/components/RadioButton';
 import CheckBox from './app/components/CheckBox';
+import prefectures from './app/constants/prefectures';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -32,6 +34,13 @@ const schema = Yup.object().shape({
     )
     .required('性別を選択して下さい'),
   terms: Yup.bool().oneOf([true], '同意が必要です'),
+  prefecture: Yup.number()
+    .oneOf(
+      prefectures.map((option) => option.value),
+      '地域を選択してください'
+    )
+    .nullable()
+    .required('地域を選択してください'),
 });
 
 const styles = StyleSheet.create({
@@ -95,6 +104,11 @@ export default class App extends Component {
                       label='性別'
                       name='gender'
                       options={genderOptions}
+                    />
+                    <Select
+                      label='お住いの地域'
+                      name='prefecture'
+                      options={prefectures}
                     />
                     <CheckBox label='同意事項' title='同意する' name='terms' />
                   </View>
