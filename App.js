@@ -14,6 +14,7 @@ import Input from './app/components/Input';
 import RadioButton from './app/components/RadioButton';
 import CheckBox from './app/components/CheckBox';
 import prefectures from './app/constants/prefectures';
+import ImageSelect from './app/components/ImageSelect';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -41,6 +42,9 @@ const schema = Yup.object().shape({
     )
     .nullable()
     .required('地域を選択してください'),
+  image: Yup.string()
+    .nullable()
+    .required('画像が必要です'),
 });
 
 const styles = StyleSheet.create({
@@ -110,6 +114,7 @@ export default class App extends Component {
                       name='prefecture'
                       options={prefectures}
                     />
+                    <ImageSelect label='アカウント画像' name='image' />
                     <CheckBox label='同意事項' title='同意する' name='terms' />
                   </View>
                   <Button
