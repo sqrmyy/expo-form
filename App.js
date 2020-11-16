@@ -18,6 +18,9 @@ import ImageSelect from './app/components/ImageSelect';
 import DatePicker from './app/components/DatePicker';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import firebase from 'firebase';
+import 'firebase/firestore';
+const db = firebase.firestore();
 
 const genderOptions = [
   { label: '男性', value: 0 },
@@ -67,6 +70,13 @@ const styles = StyleSheet.create({
 export default class App extends Component {
   onSubmit = async (values, actions) => {
     // データ送信
+    try {
+      await db.collection('/members').add(values);
+      actions.resetForm();
+      Alert.alert('送信できました');
+    } catch (error) {
+      Alert.alert('送信に失敗しました', error.message);
+    }
   };
 
   render() {
