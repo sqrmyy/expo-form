@@ -71,12 +71,27 @@ export default class App extends Component {
   onSubmit = async (values, actions) => {
     // データ送信
     try {
-      await db.collection('/members').add(values);
+      const localImageUrl = values.image; // 画像URL（キャッシュ）を保持
+      delete values.image; // Firestoreに最初に保存する際は画像URL(キャッシュ)を削除
+      const docRef = await db.collection('/members').add(values);
+      const { imageUrl } = await this.submitImage(localImageUrl, docRef.id);
+      await docRef.update({ imageUrl }); // 画像URLを登録
       actions.resetForm();
       Alert.alert('送信できました');
     } catch (error) {
       Alert.alert('送信に失敗しました', error.message);
     }
+  };
+
+  // 画像を保存する
+  submitImage = async (localImageUrl, memberId) => {
+    const imagePath = `members/${memberId}.jpg`; // 画像の位置を決める（とりあえずmemberのidを使う）
+    const imageRef = storage.ref().child(imagePath); // refを作成
+    const imageResponse = await fetch(localImageUrl); // キャッシュから画像ファイルをダウンロード
+    const blob = await imageResponse.blob(); // Blob化
+    const snapshot = await imageRef.put(blob); // Storageに保存
+    const imageUrl = await imageRef.getDownloadURL(); // URLを取得
+    return { imageUrl, snapshot };
   };
 
   render() {
